@@ -143,3 +143,24 @@ div.field, div.actions {
   font-size: 12px;
   list-style: square;
 }
+
+dl.info{
+    margin-top: 1em;
+}
+
+dl.info > dd{
+    margin-left: 0;
+}
+
+dl.info > dd > span {
+    font-size: 1.4em;
+    color: black; /* hi, mom */
+}
+
+dl.info > dd > span:first-child {
+    font-weight: bold;
+}
+
+dl.info > dd > span:last-child {
+    font-weight: normal;
+}
