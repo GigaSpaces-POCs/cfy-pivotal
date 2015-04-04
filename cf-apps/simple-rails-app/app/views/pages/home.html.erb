@@ -1,42 +1,22 @@
-<% if signed_in? %>
+<h1>Cloudify :: CloudFoundry APP</h1>
 
-    <table class="front" summary="For signed-in users">
-      <tr>
-        <td class="main">
-          <h1 class="micropost">What's up?</h1>
-          <%= render 'shared/micropost_form' %>
-          <%= render 'shared/feed' %>
-        </td>
-        <td class="sidebar round">
-          <%= render 'shared/user_info' %>
-          <%= render 'shared/stats' %>
-        </td>
-      </tr>
-    </table>
+<p>
+  This application helps demonstrate how to provision and scale service instances across CloudFoundry pools.
 
-<% else %>
+<dl class="info">
+  <dd>
+    <span>Hostname:</span>
+    <span><%= hostname %></span>
+  </dd>
 
-    <h1>Cloudify :: CloudFoundry APP</h1>
+  <dd>
+    <span>IP:</span>
+    <span><%= ip_addy %></span>
+  </dd>
+  <dd>
+    <span>Space:</span>
+    <span><%= space %></span>
+  </dd>
+</dl>
 
-    <p>
-      This application helps demonstrate how to provision and scale service instances across CloudFoundry pools.
-
-    <dl class="info">
-      <dd>
-        <span>Hostname:</span>
-        <span><%= hostname %></span>
-      </dd>
-
-      <dd>
-        <span>IP:</span>
-        <span><%= ip_addy %></span>
-      </dd>
-      <dd>
-        <span>Space:</span>
-        <span><%= space %></span>
-      </dd>
-    </dl>
-
-    </p>
-
-<% end %>
+</p>
