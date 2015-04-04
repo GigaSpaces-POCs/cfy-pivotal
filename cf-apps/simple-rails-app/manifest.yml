@@ -1,9 +1,7 @@
 ---
 applications:
-- name: rails-sample
-  memory: 256M
-  instances: 1
+- name: demoapp8
+  memory: 512M
+  instances: 2
   path: .
-  command: bundle exec rake db:migrate && bundle exec rails s -p $PORT
-  services:
-    - rails-postgres
+  command: bundle exec rails s -p $PORT
