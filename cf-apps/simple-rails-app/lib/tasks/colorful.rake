@@ -1,27 +1,26 @@
 namespace :colorful do
 
-  desc "Reset the color of certain content on the homepage"
-  task :restyle, [:color] do |t, args|
+  desc 'Reset the color of certain content on the homepage'
+  task :restyle, [:color] do |task, args|
     val = args['color']
-    tmpfile = temp_file
+    tmpfile = temp_file('custom')
 
     command =
-        'sed -i "~" "s:black; \\/\* hi, mom \\*\\/:REPLACE;:" ./public/stylesheets/custom.css'
+        'sed -e "s:black; \\/\* hi, mom \\*\\/:REPLACE;:" ./public/stylesheets/custom.css > TMPFILE'
         .gsub('REPLACE', val)
         .gsub('TMPFILE', tmpfile)
     do_exec command
 
     command =
-        'mv -f TMPFILE ./public/stylesheets/custom.css'
+        'mv -f /tmp/custom.* ./public/stylesheets/custom.css'
     do_exec command
 
   end
 
-  desc "Reset the certain content on the homepage"
-  task :update_content, [:color] do |t, args|
+  desc 'Reset the certain content on the homepage'
+  task :update_content, [:color] do |task, args|
     val = args['color']
-    tmpfile = temp_file
-    puts 'XXXXXXXX', tmpfile
+    tmpfile = temp_file('home')
 
     command =
         'sed -e "s:HIMOM:REPLACE:" ./app/views/pages/home.html.erb > TMPFILE'
@@ -30,21 +29,24 @@ namespace :colorful do
     do_exec command
 
     command =
-        'mv -f TMPFILE ./app/views/pages/home.html.erb'
-        .gsub('TMPFILE', tmpfile)
+        'mv -f /tmp/home.* ./app/views/pages/home.html.erb'
     do_exec command
 
   end
 
   def do_exec(the_command)
-    puts 'command is: ', the_command
+    puts the_command
     system the_command
   end
 
-  def temp_file
-    tmpfile = '/tmp/FILENAME'.gsub('FILENAME', random_string)
+  # @param [string] piece
+  # @return /tmp/piece.[some random string]
+  def temp_file( piece )
+    tmpfile = '/tmp/FILENAME.EXT'
+      .gsub('FILENAME', piece)
+      .gsub('EXT', random_string)
     # puts 'temp file name', tmpfile
-    command = 'mktemp FILE'.gsub('FILE', tmpfile)
+    command = 'touch FILE'.gsub('FILE', tmpfile)
     do_exec command
     tmpfile
   end
