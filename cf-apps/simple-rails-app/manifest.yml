@@ -1,7 +1,10 @@
 ---
 applications:
-- name: demoapp8
+- name: demoapp10
   memory: 512M
-  instances: 2
+  instances: 1
   path: .
-  command: bundle exec rails s -p $PORT
+  command: >
+    bundle exec rake colorful:restyle[red] &&
+    bundle exec rake colorful:update_content[blue] &&
+    bundle exec rails s -p $PORT
