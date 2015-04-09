@@ -7,10 +7,6 @@ module PagesHelper
     ip.ip_address if ip
   end
 
-  def space
-    'not implemented yet'
-  end
-
   def hostname
     request.host
   end
