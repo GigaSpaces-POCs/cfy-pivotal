@@ -1,0 +1,32 @@
+tosca_definitions_version: cloudify_dsl_1_1
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.2rc/types.yaml
+
+node_types:
+
+  cloud_foundry:
+    derived_from: cloudify.nodes.Container
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        scaleup:
+          implementation: scritps/scale-up.sh
+        scaledown:
+          implementation: scritps/scale-down.sh
+        create:
+          implementation: scripts/cf-push.sh
+#          inputs:
+#            process:
+#              args: [arg1_value, arg2_value]
+
+node_templates:
+  pivotal:
+    type: cloud_foundry
+
+#    lifecycle-operations:
+#      create:
+#        inputs: ['color']
+#  anynines:
+#    type: cloud_foundry
+#    properties:
+#      endpoint:
