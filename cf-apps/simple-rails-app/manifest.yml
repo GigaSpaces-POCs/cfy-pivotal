@@ -1,6 +1,5 @@
 ---
 applications:
-- name: demoapp10
   memory: 512M
   instances: 1
   path: .
