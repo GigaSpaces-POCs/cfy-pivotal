@@ -1,0 +1,179 @@
+tosca_definitions_version: cloudify_dsl_1_1
+
+imports:
+- http://www.getcloudify.org/spec/cloudify/3.2rc1/types.yaml
+
+#plugins:
+
+inputs:
+
+  anyninesEndpoint:
+    type: string
+    default: 'api.de.a9s.eu'
+  anyninesPassword:
+    type: string
+    default: ''
+  anyninesOrganization:
+    type: string
+    default: ''
+  anyninesUsername:
+    type: string
+    default: ''
+  applicationName:
+    type: string
+    default: 'Demonstration App'
+  color1:
+    type: string
+    default: red
+  color2:
+    type: string
+    default: green
+  color3:
+    type: string
+    default: #0000FF
+  pivotalEndpoint:
+    type: string
+    default: 'api.run.pivotal.io'
+  pivotalOrganization:
+    type: string
+    default: ''
+  pivotalPassword:
+    type: string
+    default: ''
+  pivotalUsername:
+    type: string
+    default: ''
+
+node_types:
+
+  cloudify.cloudfoundry.provider:
+    derived_from: cloudify.nodes.Container
+    properties:
+      endpoint: {}
+      username: {}
+      password: {}
+
+  cloudify.cloudfoundry.space:
+    derived_from: cloudify.cloudfoundry.provider
+    properties:
+      organization: {}
+      space: {}
+
+  cloudify.cloudfoundry.app:
+    derived_from: cloudify.nodes.WebServer
+    properties:
+      application_name: {}
+      color: {}
+
+relationships:
+
+  cloudify.cloudfoundry.deployment:
+    derived_from: cloudify.relationships.contained_in
+    source_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        preconfigure: scripts/login.sh
+        establish: scripts/cf-push.sh
+
+node_templates:
+
+  # CloudFoundry PaaS providers
+
+  pivotal:
+    type: cloudify.cloudfoundry.provider
+    properties:
+      endpoint: { get_input: pivotalEndpoint }
+      username: { get_input: pivotalUsername }
+      password: { get_input: pivotalPassword }
+
+  anynines:
+    type: cloudify.cloudfoundry.provider
+    properties:
+      endpoint: { get_input: anyninesEndpoint }
+      username: { get_input: anyninesUsername }
+      password: { get_input: anyninesPassword }
+
+  # spaces belonging to this implementation on the PaaS accounts
+
+  left:
+    type: cloudify.cloudfoundry.space
+    properties:
+      endpoint: { get_input: pivotalEndpoint }
+      username: { get_input: pivotalUsername }
+      password: { get_input: pivotalPassword }
+      organization: { get_input: pivotalOrganization }
+      space: left
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: pivotal
+
+  right:
+    type: cloudify.cloudfoundry.space
+    properties:
+      endpoint: { get_input: pivotalEndpoint }
+      username: { get_input: pivotalUsername }
+      password: { get_input: pivotalPassword }
+      organization: { get_input: pivotalOrganization }
+      space: right
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: pivotal
+
+  production:
+    type: cloudify.cloudfoundry.space
+    properties:
+      endpoint: { get_input: anyninesEndpoint }
+      username: { get_input: anyninesUsername }
+      password: { get_input: anyninesPassword }
+      organization: { get_input: anyninesOrganization }
+      space: production
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: anynines
+
+  # app deployments in the spaces
+
+  rails1:
+    type: cloudify.cloudfoundry.app
+    properties:
+      application_name: { get_input: applicationName }
+      color: { get_input: color1 }
+    relationships:
+      - type: cloudify.cloudfoundry.deployment
+        target: left
+
+  rails2:
+    type: cloudify.cloudfoundry.app
+    properties:
+      application_name: { get_input: applicationName }
+      color: { get_input: color2 }
+    relationships:
+      - type: cloudify.cloudfoundry.deployment
+        target: right
+
+  rails3:
+    type: cloudify.cloudfoundry.app
+    properties:
+      application_name: { get_input: applicationName }
+      color: { get_input: color3 }
+    relationships:
+      - type: cloudify.cloudfoundry.deployment
+        target: production
+
+#workflows:
+#
+#  scale:
+#    mapping: scritps/scale.sh
+#    parameters:
+#      color:
+#        description: >
+#          When scaled up, the newly instance will be provided a css color,
+#          which will be used to style display information on the front page of
+#          the newly allocated instance.
+#        default: black
+#      delta:
+#        description: >
+#          The number of instances to add or subtract from the provider's
+#          pool.
+#        default: 1
+
+#outputs:
