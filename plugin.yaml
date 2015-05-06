@@ -13,6 +13,9 @@ inputs:
   anyninesPassword:
     type: string
     default: ''
+  anyninesSpace:
+    type: string
+    default: production-space
   anyninesOrganization:
     type: string
     default: ''
@@ -21,7 +24,7 @@ inputs:
     default: ''
   applicationName:
     type: string
-    default: 'Demonstration App'
+    default: 'Cloudify Webapp'
   color1:
     type: string
     default: red
@@ -40,6 +43,12 @@ inputs:
   pivotalPassword:
     type: string
     default: ''
+  pivotalSpace1:
+    type: string
+    default: left-space
+  pivotalSpace2:
+    type: string
+    default: right-space
   pivotalUsername:
     type: string
     default: ''
@@ -78,9 +87,10 @@ node_templates:
 
   # CloudFoundry PaaS providers
 
-  pivotal:
+  pivotal-io:
     type: cloudify.cloudfoundry.provider
     properties:
+      install_agent: false
       endpoint: { get_input: pivotalEndpoint }
       username: { get_input: pivotalUsername }
       password: { get_input: pivotalPassword }
@@ -88,44 +98,48 @@ node_templates:
   anynines:
     type: cloudify.cloudfoundry.provider
     properties:
+      install_agent: false
       endpoint: { get_input: anyninesEndpoint }
       username: { get_input: anyninesUsername }
       password: { get_input: anyninesPassword }
 
   # spaces belonging to this implementation on the PaaS accounts
 
-  left:
+  left-space:
     type: cloudify.cloudfoundry.space
     properties:
+      install_agent: false
       endpoint: { get_input: pivotalEndpoint }
       username: { get_input: pivotalUsername }
       password: { get_input: pivotalPassword }
       organization: { get_input: pivotalOrganization }
-      space: left
+      space: { get_input: pivotalSpace1 }
     relationships:
       - type: cloudify.relationships.contained_in
-        target: pivotal
+        target: pivotal-io
 
-  right:
+  right-space:
     type: cloudify.cloudfoundry.space
     properties:
+      install_agent: false
       endpoint: { get_input: pivotalEndpoint }
       username: { get_input: pivotalUsername }
       password: { get_input: pivotalPassword }
       organization: { get_input: pivotalOrganization }
-      space: right
+      space: { get_input: pivotalSpace2 }
     relationships:
       - type: cloudify.relationships.contained_in
-        target: pivotal
+        target: pivotal-io
 
-  production:
+  prod-space:
     type: cloudify.cloudfoundry.space
     properties:
+      install_agent: false
       endpoint: { get_input: anyninesEndpoint }
       username: { get_input: anyninesUsername }
       password: { get_input: anyninesPassword }
       organization: { get_input: anyninesOrganization }
-      space: production
+      space: { get_input: anyninesSpace }
     relationships:
       - type: cloudify.relationships.contained_in
         target: anynines
@@ -139,7 +153,7 @@ node_templates:
       color: { get_input: color1 }
     relationships:
       - type: cloudify.cloudfoundry.deployment
-        target: left
+        target: left-space
 
   rails2:
     type: cloudify.cloudfoundry.app
@@ -148,7 +162,7 @@ node_templates:
       color: { get_input: color2 }
     relationships:
       - type: cloudify.cloudfoundry.deployment
-        target: right
+        target: right-space
 
   rails3:
     type: cloudify.cloudfoundry.app
@@ -157,7 +171,7 @@ node_templates:
       color: { get_input: color3 }
     relationships:
       - type: cloudify.cloudfoundry.deployment
-        target: production
+        target: prod-space
 
 #workflows:
 #
