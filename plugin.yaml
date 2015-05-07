@@ -6,7 +6,7 @@ imports:
 plugins:
   cloudfoundry:
     executor: central_deployment_agent
-    source: https://github.com/jasonnerothin/cfy-pivotal/archive/1.0.zip
+    source: https://github.com/GigaSpaces-POCs/cfy-pivotal/archive/v0.2.1.zip
 
 inputs:
 
@@ -182,17 +182,17 @@ workflows:
   ## built-in scale operation once a manager plugin has been provided.
 
   sister:
-    mapping: cloudify-cloudfoundry-plugin.workflows.scale
+    mapping: cloudfoundry.workflows.scale
     parameters:
-      node_ids:
-        description: >
-          The node_ids to scale. We want the list of node.node_id values that
-          we want to scale: e.g. [rails1, rails2, ...]
-        default: []
       node_instance_ids:
         description: >
           The instance ids to scale. These would be a list of node.id values
           that we want to scale: e.g. [rails1_12333, rails2_61b57, ...]
+        default: []
+      node_ids:
+        description: >
+          The node_ids to scale. We want the list of node.node_id values that
+          we want to scale: e.g. [rails1, rails2, ...]
         default: []
       delta:
         description: >

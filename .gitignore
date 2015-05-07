@@ -1,4 +1,8 @@
 .vagrant
+.cloudify
 .idea
-inputs.json # contains password info
+scripts/inputs.json 
+myenv
+dist
+build
 

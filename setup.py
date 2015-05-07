@@ -23,8 +23,7 @@ setup(
     version='3.2a8',
     author='cosmo-admin',
     author_email='cosmo-admin@gigaspaces.com',
-    packages=['cloudfoundry',
-              'cloudfoundry.workflows'],
+    packages=['cloudfoundry'],
     license='LICENSE',
     description='Contains necessary decorators and utility methods for '
                 'writing Cloudify plugins',
