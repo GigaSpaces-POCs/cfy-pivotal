@@ -3,7 +3,10 @@ tosca_definitions_version: cloudify_dsl_1_1
 imports:
 - http://www.getcloudify.org/spec/cloudify/3.2rc1/types.yaml
 
-#plugins:
+plugins:
+  cloudfoundry:
+    executor: central_deployment_agent
+    source: https://github.com/jasonnerothin/cfy-pivotal/archive/1.0.zip
 
 inputs:
 
@@ -173,21 +176,26 @@ node_templates:
       - type: cloudify.cloudfoundry.deployment
         target: prod-space
 
-#workflows:
-#
-#  scale:
-#    mapping: scritps/scale.sh
-#    parameters:
-#      color:
-#        description: >
-#          When scaled up, the newly instance will be provided a css color,
-#          which will be used to style display information on the front page of
-#          the newly allocated instance.
-#        default: black
-#      delta:
-#        description: >
-#          The number of instances to add or subtract from the provider's
-#          pool.
-#        default: 1
+workflows:
 
-#outputs:
+  ## Note that scale_up is only temporary and will be mapped back to Cloudify's
+  ## built-in scale operation once a manager plugin has been provided.
+
+  sister:
+    mapping: cloudify-cloudfoundry-plugin.workflows.scale
+    parameters:
+      node_ids:
+        description: >
+          The node_ids to scale. We want the list of node.node_id values that
+          we want to scale: e.g. [rails1, rails2, ...]
+        default: []
+      node_instance_ids:
+        description: >
+          The instance ids to scale. These would be a list of node.id values
+          that we want to scale: e.g. [rails1_12333, rails2_61b57, ...]
+        default: []
+      delta:
+        description: >
+          The number of instances to add (if positive) or subtract (if negative)
+          from the provider's pool of app instances.
+        default: 0
