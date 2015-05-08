@@ -122,6 +122,7 @@ def __nodes_to_scale(node_instance_ids, node_ids):
 
 def __get_all_nodes_instances():
     node_instances = set()
+    ctx.graph_mode()
     for node in ctx.nodes:
         for instance in node.instances:
             node_instances.add(instance)
