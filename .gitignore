@@ -6,3 +6,4 @@ myenv
 dist
 build
 local-storage
+*.pyc
