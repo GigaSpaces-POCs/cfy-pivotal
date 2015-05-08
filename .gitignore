@@ -5,4 +5,4 @@ scripts/inputs.json
 myenv
 dist
 build
-
+local-storage
